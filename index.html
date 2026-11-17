@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0B1220">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Mon PEA">
+<title>Mon PEA</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0B1220; --card:#121B2E; --card2:#18233A; --line:#22304C;
+  --txt:#E8EEF8; --mut:#8A9AB5; --dim:#5E6F8C;
+  --acc:#5B8CFF; --up:#2FD38A; --down:#FF5D6C; --warn:#FFB547;
+  --eu:#5B8CFF; --us:#B57BFF; --wd:#2FD38A; --cash:#5E6F8C; --gold:#F2C14E; --ct:#FF8F5B;
+  --r:18px;
+}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{background:var(--bg);color:var(--txt);font-family:Manrope,system-ui,-apple-system,sans-serif;font-size:15px}
+body{min-height:100vh;padding-bottom:calc(84px + env(safe-area-inset-bottom))}
+header{position:sticky;top:0;z-index:5;background:linear-gradient(var(--bg) 70%,transparent);
+  padding:calc(14px + env(safe-area-inset-top)) 18px 10px}
+.htop{display:flex;justify-content:space-between;align-items:center}
+.htitle{font-size:26px;font-weight:800;letter-spacing:-.5px}
+.hdate{font-size:12px;color:var(--mut);margin-top:2px}
+.pill{font-size:11px;font-weight:700;padding:5px 10px;border-radius:99px;background:var(--card2);color:var(--mut);border:1px solid var(--line)}
+main{padding:4px 16px 20px}
+.view{display:none;animation:fade .25s ease}
+.view.on{display:block}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+.card{background:var(--card);border:1px solid var(--line);border-radius:var(--r);padding:16px;margin-bottom:12px}
+.sec{font-size:12px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--dim);margin:20px 4px 10px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:10px}
+.mut{color:var(--mut)} .sm{font-size:12px} .b{font-weight:700}
+.up{color:var(--up)} .down{color:var(--down)} .warn{color:var(--warn)}
+
+/* Marché ticker */
+.ticker{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.tk{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:11px 12px}
+.tk .l{font-size:11px;color:var(--mut);font-weight:600}
+.tk .v{font-size:17px;font-weight:800;margin-top:3px}
+.tk .c{font-size:12px;font-weight:700;margin-top:1px}
+.alert{display:flex;gap:10px;align-items:flex-start;background:rgba(255,181,71,.08);border:1px solid rgba(255,181,71,.3);border-radius:14px;padding:12px;margin-bottom:12px;font-size:13px;line-height:1.45}
+
+/* News */
+.news .nh{display:flex;align-items:center;gap:10px;margin-bottom:10px}
+.logo{width:38px;height:38px;border-radius:11px;display:grid;place-items:center;font-weight:800;font-size:13px;flex:none}
+.news .name{font-weight:700;font-size:15px}
+.news .sub{font-size:12px;color:var(--mut)}
+.news ul{list-style:none;display:flex;flex-direction:column;gap:8px}
+.news li{font-size:13.5px;line-height:1.45;padding-left:14px;position:relative;color:#C9D4E6}
+.news li:before{content:"";position:absolute;left:0;top:8px;width:5px;height:5px;border-radius:50%;background:var(--dim)}
+.prev{margin-top:12px;padding:10px 12px;border-radius:12px;background:var(--card2);font-size:13px;line-height:1.45}
+.prev .t{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;margin-bottom:4px;display:flex;align-items:center;gap:6px}
+.dot{width:8px;height:8px;border-radius:50%;display:inline-block}
+.src{font-size:11px;color:var(--dim);margin-top:8px}
+.verdict{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:12px}
+.vd{border-radius:12px;padding:10px;font-weight:800;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px}
+.vi{font-size:18px;line-height:1}
+.hero{background:linear-gradient(135deg,#1E3A8A,#5B8CFF);border:none}
+.hero .k{font-size:12px;font-weight:700;opacity:.8;text-transform:uppercase;letter-spacing:.6px}
+.hero .bigv{font-size:34px;font-weight:800;letter-spacing:-.5px;margin:4px 0}
+.gap{display:flex;align-items:center;gap:12px;padding:11px 0;border-bottom:1px solid var(--line)}
+.gap:last-child{border-bottom:none}
+.gap .g1{flex:1}
+.gap .amt{font-weight:800;font-size:16px;text-align:right}
+.order{display:flex;align-items:center;gap:12px;padding:14px;border-radius:14px;background:rgba(47,211,138,.08);border:1px solid rgba(47,211,138,.3);margin-bottom:8px}
+.order .num{width:26px;height:26px;border-radius:50%;background:var(--up);color:#0B1220;font-weight:800;display:grid;place-items:center;flex:none;font-size:13px}
+.wait{display:flex;gap:10px;padding:12px;border-radius:14px;background:rgba(255,181,71,.07);border:1px solid rgba(255,181,71,.25);font-size:13px;line-height:1.45;margin-bottom:8px}
+
+/* Objectifs */
+.big{font-size:30px;font-weight:800;letter-spacing:-.5px}
+.bars{display:flex;height:14px;border-radius:99px;overflow:hidden;margin:12px 0 10px;background:var(--card2)}
+.bars div{height:100%}
+.leg{display:flex;flex-wrap:wrap;gap:6px 14px;font-size:12px;color:var(--mut)}
+.leg span{display:flex;align-items:center;gap:6px}
+.sl{margin-top:14px}
+.sl .row{font-size:14px;margin-bottom:6px}
+input[type=range]{width:100%;appearance:none;-webkit-appearance:none;height:6px;border-radius:99px;background:var(--card2);outline:none}
+input[type=range]::-webkit-slider-thumb{-webkit-appearance:none;width:22px;height:22px;border-radius:50%;background:var(--txt);border:4px solid var(--acc);cursor:pointer}
+.sum{margin-top:12px;font-size:12px;padding:8px 10px;border-radius:10px;text-align:center;font-weight:700}
+.cmp{display:flex;flex-direction:column;gap:14px}
+.cmp .lab{display:flex;justify-content:space-between;font-size:13px;margin-bottom:6px}
+.track{position:relative;height:10px;border-radius:99px;background:var(--card2)}
+.track .fill{position:absolute;left:0;top:0;bottom:0;border-radius:99px}
+.track .tgt{position:absolute;top:-4px;bottom:-4px;width:3px;border-radius:2px;background:var(--txt)}
+.tag{font-size:11px;font-weight:700;padding:3px 8px;border-radius:99px}
+
+/* Portefeuille */
+.donutwrap{display:flex;align-items:center;gap:18px}
+.donut{width:120px;height:120px;border-radius:50%;flex:none;position:relative}
+.donut:after{content:"";position:absolute;inset:18px;border-radius:50%;background:var(--card)}
+.donut .ctr{position:absolute;inset:0;display:grid;place-items:center;z-index:1;text-align:center;font-size:11px;color:var(--mut)}
+.donut .ctr b{display:block;font-size:15px;color:var(--txt)}
+.pos{display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--line)}
+.pos:last-child{border-bottom:none}
+.pos .info{flex:1;min-width:0}
+.pos .n{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pos .d{font-size:12px;color:var(--mut);margin-top:2px}
+.pos .r{text-align:right}
+.pos .r .v{font-weight:700}
+.pos .r .p{font-size:12px;font-weight:700;margin-top:2px}
+.buyin{display:flex;align-items:center;gap:10px;background:var(--card2);border:1px solid var(--line);border-radius:14px;padding:4px 6px 4px 14px;margin:10px 0 14px}
+.buyin input{flex:1;background:none;border:none;color:var(--txt);font:inherit;font-size:22px;font-weight:800;outline:none;width:100%}
+.buyin span{color:var(--mut);font-weight:700}
+.chips{display:flex;gap:6px}
+.chip{background:var(--card);border:1px solid var(--line);color:var(--mut);font:inherit;font-size:12px;font-weight:700;padding:8px 10px;border-radius:10px;cursor:pointer}
+.buy{display:flex;align-items:center;gap:12px;padding:12px;border-radius:14px;background:var(--card2);margin-bottom:8px}
+.buy .q{margin-left:auto;text-align:right}
+.buy .q b{display:block;font-size:16px}
+.note{font-size:11.5px;color:var(--dim);line-height:1.5;margin-top:10px}
+
+/* Idées */
+.grp{display:flex;align-items:center;gap:8px;font-weight:800;font-size:14px;margin:14px 4px 8px}
+.idea .why{font-size:13.5px;line-height:1.45;color:#C9D4E6;margin:8px 0}
+.kv{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin:10px 0}
+.kv div{background:var(--card2);border-radius:10px;padding:8px}
+.kv .l{font-size:10.5px;color:var(--mut);font-weight:700}
+.kv .v{font-size:14px;font-weight:800;margin-top:2px}
+.btns{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-top:12px}
+.btn{font:inherit;font-weight:800;font-size:14px;border-radius:12px;padding:11px;cursor:pointer;border:1px solid var(--line);background:var(--card2);color:var(--txt)}
+.btn.watch{background:var(--acc);border-color:var(--acc);color:#fff}
+.btn.watch.on{background:rgba(91,140,255,.15);color:var(--acc)}
+.btn.drop{color:var(--down)}
+.mini{display:flex;justify-content:space-between;align-items:center;padding:10px 14px;border:1px dashed var(--line);border-radius:14px;margin-bottom:8px;font-size:13px;color:var(--dim)}
+.mini button{background:none;border:none;color:var(--acc);font:inherit;font-weight:700;cursor:pointer}
+.risk{font-size:12.5px;padding:8px 10px;border-radius:10px;background:rgba(255,93,108,.07);color:#F3A6AE;line-height:1.4}
+.tl{position:relative;margin:6px 0 4px 6px;padding-left:16px;border-left:2px solid var(--line)}
+.tl .ev{position:relative;padding:4px 0 10px}
+.tl .ev:before{content:"";position:absolute;left:-22px;top:9px;width:10px;height:10px;border-radius:50%;background:var(--acc);border:2px solid var(--card)}
+.tl .dt{font-size:11px;color:var(--mut);font-weight:700}
+.tl .tx{font-size:13.5px;line-height:1.4}
+.pot{margin:10px 0}
+.empty{text-align:center;padding:40px 20px;color:var(--mut);line-height:1.5}
+.empty .e{font-size:40px;margin-bottom:8px}
+
+/* Nav */
+nav{position:fixed;left:0;right:0;bottom:0;z-index:10;display:flex;justify-content:space-around;
+  background:rgba(11,18,32,.88);backdrop-filter:blur(18px);-webkit-backdrop-filter:blur(18px);
+  border-top:1px solid var(--line);padding:8px 8px calc(8px + env(safe-area-inset-bottom))}
+nav button{flex:1;background:none;border:none;color:var(--dim);font:inherit;font-size:11px;font-weight:700;
+  display:flex;flex-direction:column;align-items:center;gap:4px;padding:6px 0;cursor:pointer;border-radius:12px}
+nav button svg{width:24px;height:24px}
+nav button.on{color:var(--txt)}
+nav button.on svg{color:var(--acc)}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="htop">
+    <div>
+      <div class="htitle" id="htitle">Actualités</div>
+      <div class="hdate">Mis à jour le 17 nov. 2026</div>
+    </div>
+    <div class="pill">PEA · Boursorama</div>
+  </div>
+</header>
+
+<main>
+<!-- ============ ONGLET 1 : ACTUALITÉS ============ -->
+<section class="view on" id="v-news">
+  <div class="ticker">
+    <div class="tk"><div class="l">CAC 40</div><div class="v">8 369</div><div class="c up">+2,82 % sem.</div></div>
+    <div class="tk"><div class="l">S&amp;P 500</div><div class="v">7 562</div><div class="c up">+2,51 % sem.</div></div>
+    <div class="tk"><div class="l">Or ($/oz)</div><div class="v">3 888</div><div class="c down">−4,60 % sem.</div></div>
+    <div class="tk"><div class="l">Taux US 10 ans</div><div class="v">5,15 %</div><div class="c warn">en hausse</div></div>
+  </div>
+
+  <div class="alert">
+    <span>⚠️</span>
+    <div><b>À surveiller : réunion de la Fed les 8–9 décembre.</b> Les marchés anticipent une hausse des taux. Cela peut secouer surtout la tech.</div>
+  </div>
+
+  <div class="sec">Mes valeurs</div>
+  <div id="newsList"></div>
+
+  <div class="sec">Idées court terme</div>
+  <div class="sm mut" style="margin:-4px 4px 10px">Pour ta poche court terme (15 %). Choisis : surveiller ou abandonner.</div>
+  <div id="ideas"></div>
+</section>
+
+<!-- ============ ONGLET 4 : SURVEILLANCE ============ -->
+<section class="view" id="v-watch">
+  <div id="watchList"></div>
+</section>
+
+<!-- ============ ONGLET 2 : OBJECTIFS ============ -->
+<section class="view" id="v-goals">
+  <div class="card">
+    <div class="mut sm b">RÉPARTITION GLOBALE</div>
+    <div class="bars" id="globalBar"></div>
+    <div class="leg" id="globalLeg"></div>
+  </div>
+
+  <div class="card">
+    <div class="row"><div class="b">Poches de la stratégie</div><span class="tag" style="background:var(--card2);color:var(--mut)">Total 100 %</span></div>
+    <div id="pocketSliders"></div>
+    <div class="sum" id="pocketSum"></div>
+  </div>
+
+  <div class="card">
+    <div class="row"><div class="b">Dans le long terme</div><span class="tag" style="background:rgba(255,181,71,.12);color:var(--warn)">À définir</span></div>
+    <div class="sm mut" style="margin-top:4px">Valeurs provisoires : donne-moi tes vrais pourcentages.</div>
+    <div id="geoSliders"></div>
+    <div class="sum" id="geoSum"></div>
+  </div>
+
+  <div class="sec">Où j'en suis vs mon objectif</div>
+  <div class="card"><div class="cmp" id="cmp"></div></div>
+</section>
+
+<!-- ============ ONGLET 3 : PORTEFEUILLE ============ -->
+<section class="view" id="v-wallet">
+  <div class="card">
+    <div class="mut sm b">VALEUR TOTALE</div>
+    <div class="big" id="total"></div>
+    <div class="sm b" id="pv"></div>
+    <div class="donutwrap" style="margin-top:16px">
+      <div class="donut" id="donut"><div class="ctr" id="donutCtr"></div></div>
+      <div class="leg" id="donutLeg" style="flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
+
+  <div class="sec">Mes lignes</div>
+  <div class="card" id="positions" style="padding:4px 16px"></div>
+
+  <div class="sec">Pour atteindre mes objectifs</div>
+  <div class="card hero" id="needHero"></div>
+  <div class="card" id="needList" style="padding:4px 16px"></div>
+
+  <div class="sec">Mon rythme</div>
+  <div class="card" id="rhythm"></div>
+
+  <div class="sec">Calendrier de mes achats</div>
+  <div class="card" id="calendar" style="padding:4px 16px"></div>
+
+  <div class="sec">Simuler un autre montant</div>
+  <div class="card">
+    <div class="b">Combien je verse ?</div>
+    <div class="buyin">
+      <input id="amount" type="number" inputmode="decimal" value="100" min="0">
+      <span>€</span>
+      <div class="chips">
+        <button class="chip" data-v="100">100</button>
+        <button class="chip" data-v="200">200</button>
+        <button class="chip" data-v="500">500</button>
+      </div>
+    </div>
+    <div id="buyList"></div>
+    <div class="note">Le versement va aux zones en retard sur ton objectif, sauf celles marquées « Attendre » dans les Actus : leur part est reportée. Chaque ordre fait au moins 100 € pour garder les frais à 0 € chez Boursorama. Ce n'est pas un conseil financier personnalisé.</div>
+  </div>
+</section>
+</main>
+
+<nav>
+  <button class="on" data-v="news">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19h14a2 2 0 0 0 2-2V5H8v12a2 2 0 0 1-4 0V9h4"/><path d="M12 9h4M12 13h4"/></svg>
+    Actus
+  </button>
+  <button data-v="goals">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="12" cy="12" r="9"/><circle cx="12" cy="12" r="5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/></svg>
+    Objectifs
+  </button>
+  <button data-v="wallet">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="6" width="18" height="14" rx="3"/><path d="M3 10h18M16 15h2"/><path d="M6 6l9-3 1 3"/></svg>
+    Portefeuille
+  </button>
+  <button data-v="watch">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+    Surveillance<span id="wcount"></span>
+  </button>
+</nav>
+
+<script>
+/* ===================== DONNÉES ===================== */
+// Zones : eu = Europe, us = Tech US, wd = Monde
+const POS = [
+  {id:"WPEA", name:"iShares MSCI World PEA", short:"WD", zone:"wd", qty:34, pru:6.98, px:6.98, note:"PRU à confirmer"},
+  {id:"UST",  name:"Amundi PEA US Tech", short:"US", zone:"us", qty:3, pru:79.01, px:77.11},
+  {id:"STX",  name:"BNP Easy Stoxx Europe 600", short:"EU", zone:"eu", qty:10, pru:20.39, px:21.63},
+  {id:"DG",   name:"Vinci", short:"DG", zone:"eu", qty:2, pru:127.74, px:114.10},
+  {id:"NEX",  name:"Nexans", short:"NX", zone:"eu", qty:1, pru:140.76, px:131.00},
+];
+const CASH = 7.70; // espèces restantes estimées
+const MONTHLY = 50;            // versement mensuel
+const EVERY = 2;               // un ordre tous les 2 mois (pour faire ≥ 100 €)
+const NEXT_ORDER = new Date(2027,0,15); // prochain achat : ~15 janvier 2027
+const MOIS = ["janv.","févr.","mars","avr.","mai","juin","juil.","août","sept.","oct.","nov.","déc."];
+const ETF_FOR = {eu:"BNP Easy Stoxx Europe 600", us:"Amundi PEA US Tech", wd:"iShares MSCI World PEA (WPEA)"};
+const PX_FOR  = {eu:21.63, us:77.11, wd:6.98};
+const ZONES = {eu:{l:"Europe",c:"var(--eu)"}, us:{l:"Tech US",c:"var(--us)"}, wd:{l:"Monde",c:"var(--wd)"}};
+
+const NEWS = [
+  {id:"UST", col:"var(--us)", items:[
+    "Jensen Huang a démissionné de Nvidia le 12 nov. ; Colette Kress assure l'intérim.",
+    "Rotation dans les semi-conducteurs : Nvidia a perdu ~493 Md$ de valorisation pendant qu'AMD et Broadcom en gagnaient ~561 Md$.",
+    "Le taux US à 10 ans à 5,15 % pèse sur les valeurs de croissance."],
+   dir:"down", act:"attendre", prev:"Baisse probable à court terme : une hausse des taux de la Fed le 9 déc. pèserait sur la tech, et Nvidia est sans PDG. Attends l'après-Fed pour renforcer."},
+  {id:"STX", col:"var(--eu)", items:[
+    "Le CAC 40 a signé sa meilleure semaine depuis avril (+2,82 %), au plus haut depuis fin août.",
+    "L'Europe profite de la rotation des investisseurs hors de la tech américaine."],
+   dir:"up", act:"renforcer", prev:"Hausse probable : l'Europe profite de la sortie des capitaux de la tech américaine. Risque : une nouvelle hausse des taux de la BCE (2,50 % aujourd'hui)."},
+  {id:"DG", col:"#E0464E", items:[
+    "Un amendement au budget 2027 propose une contribution exceptionnelle sur Vinci Autoroutes.",
+    "Vinci estime la charge possible à ~450 M€ sur 2026, payable en 2027."],
+   dir:"down", act:"attendre", prev:"Stagnation ou baisse probable tant que le budget 2027 n'est pas voté. Entreprise solide : garde tes 2 actions, mais n'en rachète pas pour l'instant."},
+  {id:"NEX", col:"#F2994A", items:[
+    "Le 12 nov., Nexans a annoncé être en discussion avec Cenergy Holdings (stade préliminaire).",
+    "Rebond récent (+3,45 % le 11 nov.), mais l'action reste sous sa moyenne 200 jours (136,44 €)."],
+   dir:"flat", act:"attendre", prev:"Direction incertaine : tout dépend de l'issue des discussions avec Cenergy. Garde ton action, attends l'annonce avant de bouger."},
+  {id:"WPEA", col:"var(--wd)", items:[
+    "Le S&P 500 est en hausse de 10,25 % depuis janvier ; les marchés mondiaux sont proches de leurs sommets.",
+    "Environ 70 % d'actions américaines dans l'indice MSCI World."],
+   dir:"up", act:"renforcer", prev:"Hausse probable sur le long terme. C'est ta ligne principale : renforce-la à chaque versement, sans chercher le bon moment."},
+];
+const DIR = {up:{i:"↗",l:"Hausse probable",c:"var(--up)"}, down:{i:"↘",l:"Baisse probable",c:"var(--down)"}, flat:{i:"→",l:"Incertain",c:"var(--warn)"}};
+const ACT = {renforcer:{l:"Renforcer",c:"var(--up)",bg:"rgba(47,211,138,.14)"}, attendre:{l:"Attendre",c:"var(--warn)",bg:"rgba(255,181,71,.14)"}};
+// Signal par zone = celui de l'ETF de la zone (sert au plan d'achat)
+const ZONE_ETF = {eu:"STX", us:"UST", wd:"WPEA"};
+const sig = k => NEWS.find(n=>n.id===ZONE_ETF[k]).act;
+
+/* ===================== IDÉES COURT TERME ===================== */
+const IDEAS = [
+  {id:"SU", grp:"elec", name:"Schneider Electric", tick:"SU · Paris · PEA ✓", col:"#3DCD58", px:238.80, pxd:"10 nov.",
+   why:"Leader mondial de l'électrification. CA record au T3 (+17,9 %) porté par les data centers, objectifs 2026 relevés 2 fois. Pourtant l'action a perdu 21,5 % en 3 mois : potentiel de rebond.",
+   tgt:330, tgtSrc:"Panmure Liberum", chg:"−21,5 % / 3 mois", risk:"Le marché a mal digéré le rachat de PTC (prime de 42 %). Le titre reste sous ses moyennes mobiles.",
+   events:[["Oct. 2026","CA T3 record : 11,46 Md€ (+17,9 %), objectifs 2026 relevés une 2e fois"],["5 oct. 2026","Annonce du rachat de l'éditeur PTC à 205 $ par action"],["10 nov. 2026","Rebond de +1,88 % à 238,80 €, au-dessus du support des 227,85 €"]],
+   stats:{"3 mois":"−21,5 %","Support":"227,85 €","RSI":"42 (neutre)","Plus haut 2026":"312,30 €"}},
+  {id:"PRY", grp:"elec", name:"Prysmian", tick:"PRY · Milan · PEA ✓", col:"#2D9CDB", px:115.10, pxd:"29 oct.",
+   why:"N°1 mondial des câbles d'énergie (réseaux, éolien, data centers). Meilleur trimestre de son histoire au T3, prévisions 2026 relevées, et objectifs 2028 atteints avec 2 ans d'avance.",
+   tgt:150.20, tgtSrc:"moyenne de 21 analystes", chg:"+6,96 % le 29 oct.", risk:"Valorisation déjà élevée (PER ~25) et sensibilité au prix du cuivre.",
+   events:[["29 oct. 2026","Résultats T3 record, prévisions 2026 relevées à nouveau, +6,96 % en séance"],["Nov. 2026","Intégration d'Atkore (acquisition US) dans les comptes"],["2026","Projet évoqué d'une cotation aux États-Unis"]],
+   stats:{"Analystes":"13 achat / 7 neutre / 1 vente","PER":"~25","Objectif":"150,20 €","Cours":"115,10 €"}},
+  {id:"EN", grp:"comm", name:"Bouygues", tick:"EN · Paris · PEA ✓", col:"#F2994A", px:43.64, pxd:"5 nov.",
+   why:"Communiqué du 5 novembre : prévision de résultat opérationnel 2026 relevée. Action accessible (~44 €), compatible avec ton budget.",
+   tgt:null, tgtSrc:"", chg:"+1,80 % le 5 nov.", risk:"Exposé au BTP et aux télécoms français, sensibles à la conjoncture et au budget de l'État.",
+   events:[["5 nov. 2026","Relèvement de la prévision de résultat opérationnel courant 2026"]],
+   stats:{"Cours":"43,64 €","Réaction":"+1,80 %","Secteurs":"BTP · Télécoms · Médias","Budget":"2 actions ≈ 87 €"}},
+  {id:"IPN", grp:"comm", name:"Ipsen", tick:"IPN · Paris · PEA ✓", col:"#9B51E0", px:149.50, pxd:"T3",
+   why:"Le labo relève à nouveau ses objectifs 2026 après 9 mois très solides : il vise désormais environ 23 % de croissance du chiffre d'affaires.",
+   tgt:null, tgtSrc:"", chg:"−1,77 % (prises de bénéfices)", risk:"Biotech/pharma : un échec d'essai clinique peut faire chuter le cours brutalement.",
+   events:[["T3 2026","Objectifs 2026 relevés une nouvelle fois : croissance du CA ~23 % à taux constants"]],
+   stats:{"Cours":"149,50 €","Croissance visée":"~23 %","Secteur":"Pharma","Budget":"1 action ≈ 150 €"}},
+];
+let ideaState = load("ideas", {});   // id -> "watch" | "drop"
+function setIdea(id,v){ ideaState[id]= ideaState[id]===v ? undefined : v; save("ideas",ideaState); renderIdeas(); renderWatch(); }
+
+function renderIdeas(){
+  const G={elec:"⚡ Électrification mondiale",comm:"📣 Communiqués récents"};
+  let html="";
+  ["elec","comm"].forEach(g=>{
+    html+=`<div class="grp">${G[g]}</div>`;
+    IDEAS.filter(i=>i.grp===g).forEach(i=>{
+      const st=ideaState[i.id];
+      if(st==="drop"){ html+=`<div class="mini"><span>${i.name} · abandonnée</span><button onclick="setIdea('${i.id}','drop')">Annuler</button></div>`; return; }
+      const pot=i.tgt?((i.tgt-i.px)/i.px*100):null;
+      html+=`<div class="card idea">
+        <div class="nh" style="display:flex;align-items:center;gap:10px">
+          <div class="logo" style="background:${i.col}22;color:${i.col}">${i.id}</div>
+          <div style="flex:1"><div class="b">${i.name}</div><div class="sm mut">${i.tick}</div></div>
+          <div class="vd" style="color:var(--up);background:rgba(47,211,138,.12);padding:6px 10px;font-size:12px"><span class="vi" style="font-size:14px">↗</span>Hausse possible</div>
+        </div>
+        <div class="why">${i.why}</div>
+        <div class="kv">
+          <div><div class="l">Cours (${i.pxd})</div><div class="v">${eur(i.px)}</div></div>
+          <div><div class="l">Variation</div><div class="v" style="font-size:12.5px">${i.chg}</div></div>
+          <div><div class="l">Potentiel</div><div class="v ${pot?'up':''}">${pot?'+'+pct(pot):'—'}</div></div>
+        </div>
+        <div class="risk">⚠️ ${i.risk}</div>
+        <div class="btns">
+          <button class="btn watch ${st==='watch'?'on':''}" onclick="setIdea('${i.id}','watch')">${st==='watch'?'✓ Surveillée':'👁 Surveiller'}</button>
+          <button class="btn drop" onclick="setIdea('${i.id}','drop')">✕ Abandonner</button>
+        </div></div>`;
+    });
+  });
+  document.getElementById("ideas").innerHTML=html+`<div class="note" style="text-align:center">Idées tirées de l'actualité, pas des ordres d'achat. Ta poche court terme = 15 % : vise 3 à 5 % max par action.</div>`;
+  const n=IDEAS.filter(i=>ideaState[i.id]==="watch").length;
+  document.getElementById("wcount").textContent = n? ` (${n})` : "";
+}
+
+function renderWatch(){
+  const list=IDEAS.filter(i=>ideaState[i.id]==="watch");
+  if(!list.length){ document.getElementById("watchList").innerHTML=`<div class="empty"><div class="e">👁</div><b>Aucune action surveillée</b><br>Dans l'onglet Actus, appuie sur « Surveiller » sous une idée court terme.</div>`; return; }
+  document.getElementById("watchList").innerHTML=list.map(i=>{
+    const pot=i.tgt?((i.tgt-i.px)/i.px*100):null;
+    return `<div class="card">
+      <div class="row"><div style="display:flex;gap:10px;align-items:center">
+        <div class="logo" style="background:${i.col}22;color:${i.col}">${i.id}</div>
+        <div><div class="b">${i.name}</div><div class="sm mut">${i.tick}</div></div></div>
+        <div style="text-align:right"><div class="b" style="font-size:18px">${eur(i.px)}</div><div class="sm mut">${i.pxd}</div></div></div>
+      ${i.tgt?`<div class="pot"><div class="lab" style="display:flex;justify-content:space-between;font-size:12px;margin-bottom:6px"><span class="mut">Cours actuel</span><span class="mut">Objectif ${eur(i.tgt)} · <b class="up">+${pct(pot)}</b></span></div>
+        <div class="track"><div class="fill" style="width:${Math.min(100,i.px/i.tgt*100)}%;background:${i.col}"></div></div>
+        <div class="sm mut" style="margin-top:4px">Source objectif : ${i.tgtSrc}</div></div>`:""}
+      <div class="sec" style="margin:14px 0 8px">Stats</div>
+      <div class="kv" style="grid-template-columns:1fr 1fr">${Object.entries(i.stats).map(([k,v])=>`<div><div class="l">${k}</div><div class="v" style="font-size:13.5px">${v}</div></div>`).join("")}</div>
+      <div class="sec" style="margin:14px 0 8px">Communiqués &amp; événements</div>
+      <div class="tl">${i.events.map(e=>`<div class="ev"><div class="dt">${e[0]}</div><div class="tx">${e[1]}</div></div>`).join("")}</div>
+      <div class="risk" style="margin-top:6px">⚠️ ${i.risk}</div>
+      <div class="btns" style="grid-template-columns:1fr"><button class="btn" onclick="setIdea('${i.id}','watch')">Retirer de la surveillance</button></div>
+    </div>`}).join("") + `<div class="note" style="text-align:center">Les cours sont figés à la date indiquée tant que la mise à jour automatique n'est pas branchée.</div>`;
+}
+
+const DEF_POCKETS = {lt:80, ct:15, or:5};
+const DEF_GEO = {eu:35, us:20, wd:45};
+let pockets = load("pockets", DEF_POCKETS);
+let geo = load("geo", DEF_GEO);
+
+function load(k,d){try{const v=JSON.parse(localStorage.getItem("pea_"+k));return v||{...d}}catch(e){return {...d}}}
+function save(k,v){try{localStorage.setItem("pea_"+k,JSON.stringify(v))}catch(e){}}
+const eur = n => n.toLocaleString("fr-FR",{minimumFractionDigits:2,maximumFractionDigits:2})+" €";
+const pct = n => n.toLocaleString("fr-FR",{maximumFractionDigits:1})+" %";
+
+/* ===================== CALCULS ===================== */
+function totals(){
+  const z={eu:0,us:0,wd:0}; let inv=0, val=0;
+  POS.forEach(p=>{const v=p.qty*p.px; z[p.zone]+=v; val+=v; inv+=p.qty*p.pru});
+  return {z, val, inv, total:val+CASH};
+}
+
+/* ===================== RENDU ===================== */
+function renderNews(){
+  document.getElementById("newsList").innerHTML = NEWS.map(n=>{
+    const p = POS.find(x=>x.id===n.id); const v=(p.px-p.pru)/p.pru*100;
+    return `<div class="card news">
+      <div class="nh">
+        <div class="logo" style="background:${n.col}22;color:${n.col}">${p.short}</div>
+        <div style="flex:1;min-width:0"><div class="name">${p.name}</div>
+        <div class="sub">${eur(p.px)} · <span class="${v>=0?'up':'down'}">${v>=0?'+':''}${pct(v)} vs ton prix</span></div></div>
+      </div>
+      <div class="verdict">
+        <div class="vd" style="color:${DIR[n.dir].c};background:color-mix(in srgb, ${DIR[n.dir].c} 12%, transparent)"><span class="vi">${DIR[n.dir].i}</span>${DIR[n.dir].l}</div>
+        <div class="vd" style="color:${ACT[n.act].c};background:${ACT[n.act].bg}">${n.act==="renforcer"?"＋":"⏸"} ${ACT[n.act].l}</div>
+      </div>
+      <ul>${n.items.map(i=>`<li>${i}</li>`).join("")}</ul>
+      <div class="prev">${n.prev}</div>
+    </div>`}).join("") + `<div class="note" style="text-align:center">Ces prévisions sont des scénarios probables, pas des certitudes. Le plan d'achat de l'onglet Portefeuille les suit.</div>`;
+}
+
+function slider(id,label,val,color,group){
+  return `<div class="sl"><div class="row"><span><span class="dot" style="background:${color};margin-right:8px"></span>${label}</span><b id="lbl-${id}">${val} %</b></div>
+  <input type="range" min="0" max="100" step="5" value="${val}" data-g="${group}" data-k="${id}"></div>`;
+}
+
+function renderGoals(){
+  const pk=[["lt","Long terme","var(--acc)"],["ct","Court terme","var(--ct)"],["or","Or","var(--gold)"]];
+  const gz=[["eu","Europe","var(--eu)"],["us","Tech US","var(--us)"],["wd","Reste du monde","var(--wd)"]];
+  document.getElementById("pocketSliders").innerHTML = pk.map(([k,l,c])=>slider(k,l,pockets[k],c,"pockets")).join("");
+  document.getElementById("geoSliders").innerHTML = gz.map(([k,l,c])=>slider(k,l,geo[k],c,"geo")).join("");
+  document.querySelectorAll("#v-goals input[type=range]").forEach(r=>r.oninput=e=>{
+    const g=e.target.dataset.g,k=e.target.dataset.k,v=+e.target.value;
+    (g==="pockets"?pockets:geo)[k]=v; save(g,g==="pockets"?pockets:geo);
+    document.getElementById("lbl-"+k).textContent=v+" %"; refreshGoals(); renderWallet();
+  });
+  refreshGoals();
+}
+
+function sumTag(el,s){
+  el.textContent = s===100 ? "✓ Total : 100 %" : `Total : ${s} % (doit faire 100 %)`;
+  el.style.background = s===100 ? "rgba(47,211,138,.1)" : "rgba(255,93,108,.1)";
+  el.style.color = s===100 ? "var(--up)" : "var(--down)";
+}
+
+function refreshGoals(){
+  sumTag(document.getElementById("pocketSum"), pockets.lt+pockets.ct+pockets.or);
+  sumTag(document.getElementById("geoSum"), geo.eu+geo.us+geo.wd);
+  const segs=[
+    ["Europe",pockets.lt*geo.eu/100,"var(--eu)"],["Tech US",pockets.lt*geo.us/100,"var(--us)"],
+    ["Monde",pockets.lt*geo.wd/100,"var(--wd)"],["Court terme",pockets.ct,"var(--ct)"],["Or",pockets.or,"var(--gold)"]];
+  document.getElementById("globalBar").innerHTML = segs.map(s=>`<div style="width:${s[1]}%;background:${s[2]}"></div>`).join("");
+  document.getElementById("globalLeg").innerHTML = segs.map(s=>`<span><i class="dot" style="background:${s[2]}"></i>${s[0]} ${pct(s[1])}</span>`).join("");
+
+  const t=totals(); const lt=t.val;
+  const rows = Object.keys(ZONES).map(k=>({l:ZONES[k].l,c:ZONES[k].c,cur:t.z[k]/lt*100,tgt:geo[k]}));
+  rows.push({l:"Court terme",c:"var(--ct)",cur:0,tgt:pockets.ct,abs:true,msg:"Pas encore ouvert"});
+  rows.push({l:"Or",c:"var(--gold)",cur:0,tgt:pockets.or,abs:true,msg:"Compte-titres à ouvrir"});
+  document.getElementById("cmp").innerHTML = rows.map(r=>{
+    const gap=r.cur-r.tgt; const ok=Math.abs(gap)<=5;
+    const tag = r.msg ? `<span class="tag" style="background:var(--card2);color:var(--dim)">${r.msg}</span>`
+      : `<span class="tag" style="background:${ok?'rgba(47,211,138,.12)':gap>0?'rgba(255,181,71,.12)':'rgba(91,140,255,.14)'};color:${ok?'var(--up)':gap>0?'var(--warn)':'var(--acc)'}">${ok?'OK':gap>0?'Trop':'À renforcer'}</span>`;
+    return `<div><div class="lab"><span class="b">${r.l} ${tag}</span><span class="mut">${pct(r.cur)} → <b style="color:var(--txt)">${r.tgt} %</b></span></div>
+      <div class="track"><div class="fill" style="width:${Math.min(r.cur,100)}%;background:${r.c}"></div><div class="tgt" style="left:calc(${r.tgt}% - 1px)"></div></div></div>`;
+  }).join("") + `<div class="note">Europe / Tech US / Monde : en % de ta partie long terme (ton PEA actuel). Le trait blanc = ton objectif.</div>`;
+}
+
+function renderWallet(){
+  const t=totals(); const pv=t.val-t.inv;
+  document.getElementById("total").textContent=eur(t.total);
+  const pvEl=document.getElementById("pv");
+  pvEl.textContent=`${pv>=0?'+':''}${eur(pv)} (${pv>=0?'+':''}${pct(pv/t.inv*100)}) de plus/moins-values`;
+  pvEl.className="sm b "+(pv>=0?"up":"down");
+
+  const parts=[...Object.keys(ZONES).map(k=>[ZONES[k].l,t.z[k],ZONES[k].c]),["Espèces",CASH,"var(--cash)"]];
+  let acc=0; const grad=parts.map(p=>{const a=acc/t.total*360; acc+=p[1]; return `${p[2]} ${a}deg ${acc/t.total*360}deg`}).join(",");
+  document.getElementById("donut").style.background=`conic-gradient(${grad})`;
+  document.getElementById("donutCtr").innerHTML=`<div><b>${POS.length}</b>lignes</div>`;
+  document.getElementById("donutLeg").innerHTML=parts.map(p=>`<span><i class="dot" style="background:${p[2]}"></i><b style="color:var(--txt)">${pct(p[1]/t.total*100)}</b>&nbsp;${p[0]}</span>`).join("");
+
+  document.getElementById("positions").innerHTML = [...POS].sort((a,b)=>b.qty*b.px-a.qty*a.px).map(p=>{
+    const v=p.qty*p.px, d=(p.px-p.pru)*p.qty, dp=(p.px-p.pru)/p.pru*100;
+    return `<div class="pos"><div class="logo" style="background:${ZONES[p.zone].c.replace(')',')')};background:color-mix(in srgb, ${ZONES[p.zone].c} 18%, transparent);color:${ZONES[p.zone].c}">${p.short}</div>
+      <div class="info"><div class="n">${p.name}</div><div class="d">${p.qty} × ${eur(p.px)} · PRU ${eur(p.pru)}${p.note?' · '+p.note:''}</div></div>
+      <div class="r"><div class="v">${eur(v)}</div><div class="p ${d>=0?'up':'down'}">${d>=0?'+':''}${eur(d)} (${pct(dp)})</div></div></div>`}).join("")
+    + `<div class="pos"><div class="logo" style="background:var(--card2);color:var(--mut)">€</div><div class="info"><div class="n">Espèces</div><div class="d">Estimation après ton achat</div></div><div class="r"><div class="v">${eur(CASH)}</div></div></div>`;
+  renderBuy();
+}
+
+// Combien investir (sans rien vendre) pour que chaque zone soit pile à son objectif
+function needs(){
+  const t=totals(); const ks=Object.keys(ZONES).filter(k=>geo[k]>0);
+  const T=Math.max(t.val, ...ks.map(k=>t.z[k]/(geo[k]/100)));
+  const need={}; Object.keys(ZONES).forEach(k=>need[k]=Math.max(0,T*geo[k]/100-t.z[k]));
+  return {need, total:T-t.val, t};
+}
+
+function renderNeeds(){
+  const {need,total,t}=needs();
+  document.getElementById("needHero").innerHTML = total<1
+    ? `<div class="k">Bravo</div><div class="bigv">Tu es dans tes objectifs</div><div class="sm">Continue à verser selon tes pourcentages.</div>`
+    : `<div class="k">Il te manque au total</div><div class="bigv">${eur(Math.ceil(total))}</div>
+       <div class="sm" style="opacity:.9">à investir, sans rien vendre, pour que ton PEA colle à tes objectifs.</div>`;
+  document.getElementById("needList").innerHTML = Object.keys(ZONES).map(k=>{
+    const cur=t.z[k]/t.val*100, n=need[k], s=sig(k);
+    const right = n<1 ? `<div class="amt up">✓ OK</div><div class="sm mut">déjà assez</div>`
+      : `<div class="amt">+${eur(Math.ceil(n))}</div><div class="sm" style="color:${ACT[s].c};font-weight:700">${s==="attendre"?"⏸ plus tard":"＋ maintenant"}</div>`;
+    return `<div class="gap"><div class="logo" style="background:color-mix(in srgb, ${ZONES[k].c} 18%, transparent);color:${ZONES[k].c}">${ZONES[k].l.slice(0,2).toUpperCase()}</div>
+      <div class="g1"><div class="b">${ZONES[k].l}</div><div class="sm mut">${pct(cur)} aujourd'hui → objectif ${geo[k]} %</div></div>
+      <div>${right}</div></div>`}).join("");
+}
+
+// Manques par zone pour un état donné de zones (z) — sans rien vendre
+function needsOf(z){
+  const val=Object.values(z).reduce((a,b)=>a+b,0);
+  const ks=Object.keys(ZONES).filter(k=>geo[k]>0);
+  const T=Math.max(val, ...ks.map(k=>z[k]/(geo[k]/100)));
+  const need={}; Object.keys(ZONES).forEach(k=>need[k]=Math.max(0,T*geo[k]/100-z[k]));
+  return need;
+}
+// Plan d'un ordre : renvoie {zone: nb de parts}
+function planOrder(z, amt, allZones){
+  const need=needsOf(z);
+  const go=Object.keys(ZONES).filter(k=>allZones||sig(k)==="renforcer");
+  let alloc={}; const sumNeed=go.reduce((s,k)=>s+need[k],0);
+  go.forEach(k=>{alloc[k]= sumNeed>0 ? Math.min(need[k], amt*need[k]/sumNeed) : 0});
+  const rest=amt-go.reduce((s,k)=>s+alloc[k],0);
+  const sumG=go.reduce((s,k)=>s+geo[k],0)||1;
+  go.forEach(k=>alloc[k]+=rest*geo[k]/sumG);
+  let ks=go.filter(k=>alloc[k]>0).sort((a,b)=>alloc[b]-alloc[a]);
+  ks.slice(1).forEach(k=>{if(alloc[k]<100){alloc[ks[0]]+=alloc[k];alloc[k]=0}});
+  const parts={}; ks.forEach(k=>{const n=Math.floor(alloc[k]/PX_FOR[k]); if(n>=1) parts[k]=n});
+  return parts;
+}
+
+function renderRhythm(){
+  const {total,t}=needs();
+  const order=MONTHLY*EVERY;
+  const months=Math.ceil(total/MONTHLY);
+  const end=new Date(NEXT_ORDER); end.setMonth(end.getMonth()+Math.max(0,Math.ceil(total/order)-1)*EVERY);
+  document.getElementById("rhythm").innerHTML=`
+    <div class="row" style="align-items:stretch;gap:8px">
+      <div class="tk" style="flex:1;background:var(--card2)"><div class="l">Je verse</div><div class="v">${MONTHLY} €</div><div class="c mut">par mois</div></div>
+      <div class="tk" style="flex:1;background:var(--card2)"><div class="l">J'achète</div><div class="v">${order} €</div><div class="c mut">tous les ${EVERY} mois</div></div>
+      <div class="tk" style="flex:1;background:var(--card2)"><div class="l">Objectif atteint</div><div class="v">${total<1?"✓":"~"+months+" mois"}</div><div class="c mut">${total<1?"déjà":MOIS[end.getMonth()]+" "+end.getFullYear()}</div></div>
+    </div>
+    <div class="note">Tes ${MONTHLY} € attendent en espèces sur le PEA le 1er mois, puis tu passes un seul ordre de ${order} € le 2e mois : c'est ce qui te garde à 0 € de frais (ordre ≥ 100 €).</div>`;
+}
+
+function renderCalendar(){
+  const t=totals(); const z={...t.z}; const order=MONTHLY*EVERY;
+  let html=""; let leftover=CASH;
+  for(let i=0;i<6;i++){
+    const d=new Date(NEXT_ORDER); d.setMonth(d.getMonth()+i*EVERY);
+    const amt=order+leftover; const parts=planOrder(z, amt, i>0);
+    let spent=0; const lines=Object.keys(parts).map(k=>{const c=parts[k]*PX_FOR[k]; spent+=c; z[k]+=c;
+      return `<b>${parts[k]} part${parts[k]>1?'s':''}</b> ${ETF_FOR[k].replace(" (WPEA)","")}`});
+    leftover=amt-spent;
+    const val=Object.values(z).reduce((a,b)=>a+b,0);
+    const mix=Object.keys(ZONES).map(k=>`${ZONES[k].l} ${Math.round(z[k]/val*100)} %`).join(" · ");
+    html+=`<div class="gap"><div class="logo" style="background:${i===0?'var(--up)':'var(--card2)'};color:${i===0?'#0B1220':'var(--mut)'};font-size:11px;line-height:1.1;text-align:center">${d.getDate()}<br>${MOIS[d.getMonth()]}</div>
+      <div class="g1"><div style="font-size:14px">${lines.join(" + ")||"—"}</div><div class="sm mut">Après : ${mix}</div></div>
+      <div class="amt" style="font-size:14px">${eur(spent)}</div></div>`;
+  }
+  document.getElementById("calendar").innerHTML=html+`<div class="note">1er achat : suit les signaux actuels des Actus. Suivants : supposent que les signaux « Attendre » sont levés (la Fed décide le 9 déc., avant ton achat de janvier). Je recalcule à chaque mise à jour des actus.</div>`;
+}
+
+function renderBuy(){
+  renderNeeds(); renderRhythm(); renderCalendar();
+  const amt=Math.max(0,+document.getElementById("amount").value||0);
+  const {need,t}=needs();
+  const waiting=Object.keys(ZONES).filter(k=>sig(k)==="attendre" && need[k]>=1);
+  const parts=planOrder({...t.z}, amt);
+  let html="", i=1, spent=0;
+  Object.keys(parts).forEach(k=>{
+    const n=parts[k]; spent+=n*PX_FOR[k];
+    html+=`<div class="order"><div class="num">${i++}</div>
+      <div style="flex:1"><div class="b" style="font-size:14px">Acheter ${n} part${n>1?'s':''}</div><div class="sm mut">${ETF_FOR[k]} · ${ZONES[k].l}</div></div>
+      <div style="text-align:right"><b>≈ ${eur(n*PX_FOR[k])}</b><div class="sm mut">${eur(PX_FOR[k])}/part</div></div></div>`;
+  });
+  if(!html) html=`<div class="mut sm" style="margin-bottom:8px">Entre un montant d'au moins ~100 €.</div>`;
+  else if(amt-spent>=1) html+=`<div class="sm mut" style="margin:2px 0 10px 4px">Reste ${eur(amt-spent)} en espèces (moins d'une part).</div>`;
+  waiting.forEach(k=>{
+    html+=`<div class="wait"><span>⏸</span><div><b>${ZONES[k].l} : en attente.</b> Il te manque ${eur(Math.ceil(need[k]))} ici, mais la prévision est « Attendre ». ${k==="us"?"Reprends après la réunion de la Fed du 9 décembre.":"Reprends quand le signal repasse à « Renforcer »."}</div></div>`;
+  });
+  document.getElementById("buyList").innerHTML=html;
+}
+
+/* ===================== NAVIGATION ===================== */
+const TITLES={news:"Actualités",goals:"Mes objectifs",wallet:"Portefeuille",watch:"Surveillance"};
+function go(v){
+  document.querySelectorAll(".view").forEach(s=>s.classList.toggle("on",s.id==="v-"+v));
+  document.querySelectorAll("nav button").forEach(b=>b.classList.toggle("on",b.dataset.v===v));
+  document.getElementById("htitle").textContent=TITLES[v];
+  window.scrollTo({top:0});
+  try{ if(location.hash!=="#"+v) history.replaceState(null,"","#"+v) }catch(e){}
+}
+document.querySelectorAll("nav button").forEach(b=>b.onclick=()=>go(b.dataset.v));
+document.getElementById("amount").oninput=renderBuy;
+document.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{document.getElementById("amount").value=c.dataset.v;renderBuy()});
+
+renderNews(); renderIdeas(); renderWatch(); renderGoals(); renderWallet();
+const h=location.hash.slice(1); if(TITLES[h]) go(h);
+</script>
+</body>
+</html>
